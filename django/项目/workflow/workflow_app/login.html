@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <style>
+        .center
+        {
+            text-align: center;
+        }
+        .input_style
+        {
+            font-size: 16px;
+            height: 32px;
+            width: 256px;
+            padding: 0 15px;
+            border-radius: 20px;
+            border-style: solid;
+            border-color: #d9d9d9;
+        }
+        .section_style
+        {
+            font-size: 16px;
+            height: 32px;
+            width: 140px;
+            text-align: center;
+            text-align-last:center;
+            border-radius: 20px;
+            border-style: solid;
+            border-color: #d9d9d9;
+        }
+    </style>
+    <script type="text/javascript">
+        function get_key() {
+            var stat_value=document.getElementById('start_node')[0].value
+        }
+    </script>
+</head>
+
+<body style="background-color: #C0C0C0;margin: -23px 0 0 0;">
+    <form action="/run/" method="post" style="background-color: #C0C0C0;width: 100%;">
+		<h1 style="text-align: center">首页</h1>
+        <div style="margin-left: 15px;text-align: center;">
+    		<p style="font-size: 18px;display: inline">流程开始节点 :</p>&nbsp;
+
+	        <select class="section_style" id="start_node" name="start" required >
+	        	<option selected="selected" disabled="disabled"  style='display: none' value=''></option>
+                {% for i in hello %}
+                    <option value={{ i }}>{{ i }}</option>
+                {% endfor %}
+	        </select>&nbsp;&nbsp;
+
+            <p style="font-size: 18px;display: inline">流程结束节点:</p>&nbsp;&nbsp;
+                <select class="section_style" onclick="get_key()" name="end" required>
+                    <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
+                    <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
+                        {% for i in hello %}
+                            <option value={{ i }}>{{ i }}</option>
+                        {% endfor %}
+                </select>&nbsp;&nbsp;
+            <p style="font-size: 18px;display: inline">请输入单号：</p>
+                <input id="codeName" type="text" name="odd_num" placeholder="请输入单号" class="input_style" required oninvalid="setCustomValidity('请输入单号');" oninput="setCustomValidity('');">
+                &nbsp;&nbsp;
+                <input type="submit" style="font-size: 18px;" value="提交">
+                <input type="reset"  style="font-size: 18px;" value="清空">
+         </div><br>
+    </form>
+
+    <div id="large-header">
+    	<div style="background-color: white;width: 1000px;height: 700px;position: absolute;z-index: -1;left: 50%;transform: translateX(-50%);">
+            {{ start }}{{end}}{{odd_num}}<br>
+
+            {% for i in result %}
+                <p>{{ i }}</p>
+            {% endfor %}
+        </div>
+    	<canvas id="demo-canvas" style="position: fixed; top: 0px;z-index: -1;"></canvas>
+    </div>
+
+
+	</body>
+<script src="/static/js/TweenLite.min.js" type="text/javascript"></script>
+<script src="/static/js/EasePack.min.js" type="text/javascript"></script>
+<script src="/static/js/canvasGeneratrix.js" type="text/javascript"></script>
+</html>

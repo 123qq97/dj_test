@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <a href="good">链接</a>
+    <ul>
+        {% for i in student_list %}
+            <li>
+                {{ forloop.counter }}--{{ i.sname }}
+            </li>
+        {% empty %}
+            <li>此列表没有学生</li>
+        {% endfor %}
+    </ul>
+
+    {% comment %}
+    <p>321321321</p>
+    <p>注释的内容</p>
+    {% endcomment %}
+
+    {% ifequal '值1' '值1' %}
+        <p>判断值1=值2，等于则输出</p>
+    {% endifequal %}
+
+    <h1>{{ str_name|upper }}</h1>
+    <h1>{{ list_name|join:'#' }}</h1>
+    <h1>{{ test|default:'没有这个值' }}</h1>
+    <h1>num= {{num}}</h1>
+    <!--  num+10  -->
+    <h1>{{num|add:10}}</h1>
+    <!--  num-5  -->
+    <h1>{{num|add:-5}}</h1>
+    <!--  num*5  -->
+    <h1>{% widthratio num 1 5 %}</h1>
+    <!--  num/5  -->
+    <h1>{% widthratio num 5 1 %}</h1>
+
+    {# <p>注释的文字</p> #}
+
+</body>
+</html>

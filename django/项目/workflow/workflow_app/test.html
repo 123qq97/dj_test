@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+</head>
+<body>
+    <input id="inp1" type="text">+
+    <input id="inp2" type="text">=
+    <input id="inp3" type="text">
+    <input id="btn1" class="btn btn-dark" type="submit" value="求和">
+<script>
+    $('#btn1').click(function () {
+        //朝后端发送ajax请求
+        $.ajax({
+            //1.指定向哪个地址提交ajax请求，不填则默认向当前地址提交
+            url: '/test_ajax/',
+            //请求的类型：get/post，默认是get
+            type: 'post',
+            //请求后台传的参数
+            data: {'inp1':$('#inp1').val(),'inp2':$('#inp2').val()},
+
+            //4.回调函数：当后端返回结果时自动触发，args用来接收后端返回的结果
+            success:function (args) {
+                //日志窗口显示args,args:后台返回的变量d
+                console.log(args, typeof args);
+                //将结果显示在id=inp3 的输入框内
+                $('#inp3').val(args.sum)
+            }
+        })
+        }
+    )
+</script>
+</body>
+</html>
