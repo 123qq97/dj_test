@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+#https://www.bilibili.com/video/BV1vt41147K8?p=8
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', 'df_user.urls'),
