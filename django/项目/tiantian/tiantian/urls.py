@@ -23,5 +23,4 @@ urlpatterns = [
     path('cart/' 'df_cart.urls'),
     path('order/','df_order.urls'),
     path('','df_goods.urls')
-
 ]

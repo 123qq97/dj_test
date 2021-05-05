@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.core.mail import send_mail
+from django.contrib.auth import authenticate,login
 from django.views.generic import View
 from django.conf import settings
 from user.models import User
-
+from celery_tasks.tasks import send_register_active_email
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
 import re
@@ -154,14 +155,17 @@ class RegisterView(View):
         token = token.decode()
 
         #发邮件
-        subject = '天天生鲜欢迎信息'
-        message = ''
-        sender = settings.EMAIL_FORM    #收件人看到的发件人
-        receiver = [email]              #收件人
-        html_message = '<h1>%s,欢迎您成为天天生鲜注册会员</h1>请点击下面链接激活您的账户:<br/><a href="http://127.0.0.1:8000/user/active/%s">http://127.0.0.1:8000/user/active/%s</a>'%(username,token,token)
+        # subject = '天天生鲜欢迎信息'
+        # message = ''
+        # sender = settings.EMAIL_FORM    #收件人看到的发件人
+        # receiver = [email]              #收件人
+        # html_message = '<h1>%s,欢迎您成为天天生鲜注册会员</h1>请点击下面链接激活您的账户:<br/><a href="http://127.0.0.1:8000/user/active/%s">http://127.0.0.1:8000/user/active/%s</a>'%(username,token,token)
+        #
+        # send_mail(subject, message,sender, receiver,html_message=html_message)
 
-
-        send_mail(subject, message,sender, receiver,html_message=html_message)
+        # 调用celery定义的函数，添加任务；
+        # 执行任务：需先启动redis，并在cmd窗口该项目路径下执行celery_tasks.tasks文件： celery -A celery_tasks.tasks worker -l info
+        send_register_active_email.delay(email, username, token)
 
         # 视图重定向
         return redirect(reverse('goods:index'))
@@ -192,4 +196,51 @@ class LoginView(View):
     '''登录'''
     def get(self,request):
         '''显示登录页面'''
-        return render(request,'login.html')
+        if 'username' in request.COOKIES:
+            username = request.COOKIES.get('username')
+            checked = 'checked'
+        else:
+            username = ''
+            checked = ''
+        return render(request, 'login.html', {'username':username, 'checked':checked})
+
+    def post(self,request):
+        '''登录校验'''
+
+        # 接收数据
+        username = request.POST.get('username')
+        password = request.POST.get('pwd')
+
+        #校验数据
+        if not all([username,password]):
+            return render(request, 'login.html', {'errmsg':'数据不完整'})
+
+        #业务处理：登录校验
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            #用户名、密码正确
+            if user.is_active:
+                #用户已激活
+                #记录用户登录状态
+                login(request,user)
+
+                # 跳转首页
+                resonse = redirect(reverse('goods:index'))
+
+                #判断是否需要记住
+                remember = request.POST.get('remember')
+
+                if remember == 'on':
+                    #记住用户名
+                    resonse.set_cookie('username', username, max_age=7*24*3600)
+                else:
+                    resonse.delete_cookie('username')
+
+                #返回resonse
+                return resonse
+            else:
+                #用户未激活
+                return render(request, 'login.html', {'errmsg':'账户未激活！'})
+        else:
+            #用户名或密码错误
+            return render(request, 'login.html', {'errmsg':'用户名或密码错误！'})
