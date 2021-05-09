@@ -13,6 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
     https://www.bilibili.com/video/BV1vt41147K8?p=18
+    django-celery     --3.3.1
+    django-redis      --4.12.1
+    celery-with-redis --3.0
+    redis             --2.10.6
+    celery            --3.1.26.post2
 """
 from django.contrib import admin
 from django.urls import path,include

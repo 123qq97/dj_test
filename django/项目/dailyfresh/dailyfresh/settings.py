@@ -166,3 +166,6 @@ CACHES = {
 #配置session存储
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+
+#设置登录session过期后，自动跳转登录页
+LOGIN_URL = '/user/login'

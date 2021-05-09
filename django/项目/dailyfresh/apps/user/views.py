@@ -8,6 +8,7 @@ from user.models import User
 from celery_tasks.tasks import send_register_active_email
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
+from utils.mixin import LoginRequiredMixin
 import re
 from django.http import HttpResponse
 
@@ -224,8 +225,11 @@ class LoginView(View):
                 #记录用户登录状态
                 login(request,user)
 
-                # 跳转首页
-                resonse = redirect(reverse('goods:index'))
+                #获取登录后所要跳转到的地址
+                #默认跳转到首页
+                next_url = request.GET.get('next', reverse('goods:index'))
+                # 跳转到next_url
+                resonse = redirect(next_url)
 
                 #判断是否需要记住
                 remember = request.POST.get('remember')
@@ -246,22 +250,22 @@ class LoginView(View):
             return render(request, 'login.html', {'errmsg':'用户名或密码错误！'})
 
 #/user
-class UserInfoView(View):
+class UserInfoView(LoginRequiredMixin, View):
     '''用户中心-信息页'''
     def get(self,request):
         '''显示'''
-        return render(request, 'user_center_info.html')
+        return render(request, 'user_center_info.html', {'page':'user'})
 
 #/user/order
-class UserOrderView(View):
+class UserOrderView(LoginRequiredMixin, View):
     '''用户中心-订单页'''
     def get(self,request):
         '''显示'''
-        return render(request, 'user_center_order.html')
+        return render(request, 'user_center_order.html', {'page':'order'})
 
 #/user/address
-class AddressView(View):
+class AddressView(LoginRequiredMixin, View):
     '''用户中心-地址页'''
     def get(self,request):
         '''显示'''
-        return render(request, 'user_center_site.html')
+        return render(request, 'user_center_site.html', {'page':'address'})

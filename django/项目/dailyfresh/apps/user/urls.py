@@ -1,4 +1,5 @@
 from django.urls import path,re_path
+from django.contrib.auth.decorators import login_required   #登录session校验函数，session超时自动跳转登录页
 from .views import RegisterView,ActiveView,LoginView,UserInfoView,UserOrderView,AddressView
 
 urlpatterns = [
